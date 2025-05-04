@@ -1,7 +1,6 @@
 include README.md
 include LICENSE
 include TRANSLATIONS.md
-include INSTALL_AUR.md
 include requirements.txt
 include compile_resources.py
 recursive-include data *
