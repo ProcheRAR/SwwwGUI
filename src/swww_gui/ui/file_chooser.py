@@ -62,10 +62,10 @@ class ImageItem(Gtk.FlowBoxChild):
         box.set_margin_start(6)
         box.set_margin_end(6)
 
-        # Create thumbnail image
+        # Create thumbnail image with improved quality
         self.image = Gtk.Picture()
-        self.image.set_size_request(120, 90)
-        self.image.set_content_fit(Gtk.ContentFit.COVER)
+        self.image.set_size_request(140, 105)
+        self.image.set_content_fit(Gtk.ContentFit.COVER)  # COVER works better for thumbnails
         self.image.add_css_class("card")
         box.append(self.image)
 
@@ -95,29 +95,44 @@ class ImageItem(Gtk.FlowBoxChild):
     def _load_thumbnail_thread(self):
         """Thread function to load thumbnail."""
         try:
-            # Try to use more efficient loading method first
+            # For best thumbnail quality, load at full size first
             try:
-                # Create image by loading only required size
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                    self.file_path, 120, 90, True)
-            except:
-                # If failed, load entire image
+                # Load the full image
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.file_path)
-                # And scale manually if needed
+                
+                # Calculate dimensions while maintaining aspect ratio
                 orig_width = pixbuf.get_width()
                 orig_height = pixbuf.get_height()
-                scale = min(120 / orig_width, 90 / orig_height)
+                
+                # Use a larger target size for better quality (3x the display size)
+                target_width = 420
+                target_height = 315
+                
+                # Calculate the scale while preserving aspect ratio
+                scale = min(target_width / orig_width, target_height / orig_height)
                 new_width = int(orig_width * scale)
                 new_height = int(orig_height * scale)
-                pixbuf = pixbuf.scale_simple(new_width, new_height, GdkPixbuf.InterpType.BILINEAR)
+                
+                # Use TILES interpolation which often gives sharper results than HYPER for thumbnails
+                pixbuf = pixbuf.scale_simple(new_width, new_height, GdkPixbuf.InterpType.TILES)
+            except:
+                # Fallback: try direct scaling which is often better for thumbnails
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        self.file_path, 420, 315, True)
+                except:
+                    # Last fallback: just try to load with default parameters
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        self.file_path, 140, 105, True)
             
             # Cache the thumbnail
             _THUMBNAIL_CACHE.put(self.file_path, pixbuf)
             
             # Update UI in the main thread
             GLib.idle_add(lambda: self._set_thumbnail(pixbuf))
-        except Exception:
+        except Exception as e:
             # If loading fails, show a placeholder
+            print(f"Error loading thumbnail for {self.file_path}: {e}")
             GLib.idle_add(lambda: self._set_placeholder())
 
     def _set_thumbnail(self, pixbuf):
