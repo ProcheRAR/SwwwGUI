@@ -1,41 +1,41 @@
 # SwwwGUI Translations
 
-SwwwGUI поддерживает мультиязычный интерфейс с простой системой переводов на основе JSON-файлов.
+SwwwGUI supports a multi-language interface with a simple JSON-based translation system.
 
-## Поддерживаемые языки
+## Supported Languages
 
-По умолчанию SwwwGUI поставляется с двумя языками:
+By default, SwwwGUI comes with two languages:
 - English (en)
-- Русский (ru)
+- Russian (ru)
 
-## Как добавить новый перевод
+## How to Add a New Translation
 
-1. **Создайте шаблон перевода**:
-   - Запустите SwwwGUI, перейдите в "Настройки" -> "Язык"
-   - Нажмите кнопку "Создать шаблон перевода"
-   - Шаблон будет создан в `~/.config/swww-gui/translations/template.json`
+1. **Create a translation template**:
+   - Launch SwwwGUI, go to "Settings" -> "Language"
+   - Click the "Create Translation Template" button
+   - The template will be created in `~/.config/swww-gui/translations/template.json`
 
-2. **Создайте файл перевода**:
-   - Скопируйте шаблон в новый файл с названием по коду языка, например:
+2. **Create a translation file**:
+   - Copy the template to a new file named with the language code, for example:
      ```
      cp ~/.config/swww-gui/translations/template.json ~/.config/swww-gui/translations/fr.json
      ```
-     (где `fr` для французского языка)
+     (where `fr` is for French)
 
-3. **Отредактируйте файл перевода**:
-   - Установите поле "name" с названием языка на его родном языке (например, "Français")
-   - Переведите все строки в разделе "translations"
-   - Сохраните файл
+3. **Edit the translation file**:
+   - Set the "name" field to the language name in its native form (e.g., "Français")
+   - Translate all strings in the "translations" section
+   - Save the file
 
-4. **Перезапустите SwwwGUI**, ваш новый язык должен появиться в настройках
+4. **Restart SwwwGUI**, your new language should appear in the settings
 
-## Важные замечания
+## Important Notes
 
-- Строки перевода должны содержать ровно такие же форматирующие элементы (например, `{0}`) как в оригинале
-- Технические термины часто лучше оставлять без перевода
-- Переводы хранятся исключительно в пользовательской директории `~/.config/swww-gui/translations/`
+- Translation strings must contain exactly the same formatting elements (e.g., `{0}`) as the original
+- Technical terms are often better left untranslated
+- Translations are stored exclusively in the user directory `~/.config/swww-gui/translations/`
 
-## Пример JSON-файла перевода
+## Example JSON Translation File
 
 ```json
 {
@@ -47,7 +47,7 @@ SwwwGUI поддерживает мультиязычный интерфейс �
     "language": "Langue",
     "apply": "Appliquer",
     "preview": "Aperçu"
-    // ... другие строки перевода
+    // ... other translation strings
   }
 }
 ``` 
