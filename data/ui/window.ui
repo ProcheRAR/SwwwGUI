@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="SwwwGuiWindow" parent="AdwApplicationWindow">
+    <property name="default-width">1000</property>
+    <property name="default-height">680</property>
+    <property name="title">SwwwGui</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="centering-policy">strict</property>
+            <property name="title-widget">
+              <object class="AdwWindowTitle" id="title_label">
+                <property name="title">SwwwGui</property>
+                <property name="subtitle">Wayland Wallpaper Manager</property>
+              </object>
+            </property>
+            <child type="start">
+              <object class="GtkButton" id="settings_button">
+                <property name="icon-name">view-more-symbolic</property>
+                <property name="tooltip-text">Settings</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkBox">
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkButton" id="preview_button">
+                    <property name="label">Preview</property>
+                    <property name="tooltip-text">Preview wallpaper</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="apply_button">
+                    <property name="label">Apply</property>
+                    <property name="tooltip-text">Apply wallpaper</property>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSearchBar">
+            <property name="search-mode-enabled">true</property>
+            <property name="show-close-button">false</property>
+            <child>
+              <object class="GtkSearchEntry" id="search_entry">
+                <property name="width-request">500</property>
+                <property name="placeholder-text">Search images...</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStack" id="main_stack">
+            <property name="transition-type">crossfade</property>
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkStackPage">
+                <property name="name">main</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <child>
+                      <object class="GtkBox" id="image_container">
+                        <property name="orientation">vertical</property>
+                        <property name="width-request">450</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="orientation">vertical</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="main_content">
+                        <property name="orientation">vertical</property>
+                        <property name="hexpand">true</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
