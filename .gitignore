@@ -52,7 +52,18 @@ venv.bak/
 
 # Custom
 .DS_Store 
+*.log
+*.bak
+*~
+*.tmp
 
 # Absolute paths
 ~/
 /home/ 
+
+# Resource files that should be generated, not committed
+src/swww_gui/resources.gresource
+
+# User config files
+config.json
+user_settings.json 

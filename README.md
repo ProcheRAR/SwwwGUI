@@ -40,6 +40,11 @@ For more detailed instructions, see [INSTALL_AUR.md](INSTALL_AUR.md).
    ```bash
    git clone https://github.com/ProcheRAR/SwwwGUI.git
    cd SwwwGUI
+   
+   # Compile resources first
+   python compile_resources.py
+   
+   # Install the package
    pip install -e .
    ```
 
@@ -52,8 +57,24 @@ For more detailed instructions, see [INSTALL_AUR.md](INSTALL_AUR.md).
 
 - Python 3.8+
 - PyGObject
+- GTK4
+- Libadwaita
 - swww (daemon)
 - Optional: matugen (for dynamic theme generation)
+
+## Development Setup
+
+If you're developing for SwwwGUI, make sure to follow these steps:
+
+1. Install development dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. After any change to files in the `data` directory, regenerate resources:
+   ```bash
+   python compile_resources.py
+   ```
 
 ## Translations
 
