@@ -11,25 +11,26 @@ depends=('python' 'python-gobject' 'gtk4' 'libadwaita' 'swww')
 optdepends=('matugen: for matugen theme generation')
 makedepends=('python-setuptools' 'python-pip' 'python-wheel')
 options=('!emptydirs')
-source=(".")
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
-  cd "${srcdir}"
+  cd "SwwwGUI-$pkgver"
+  
   # Compile GResource file
   python compile_resources.py
   
-  # Исправляем предупреждения в setup.py
+  # Fix warnings in setup.py
   sed -i 's/find_packages/find_namespace_packages/g' setup.py
 }
 
 build() {
-  cd "${srcdir}"
+  cd "SwwwGUI-$pkgver"
   python setup.py build
 }
 
 package() {
-  cd "${srcdir}"
+  cd "SwwwGUI-$pkgver"
   python setup.py install --root="$pkgdir" --optimize=1 --skip-build
   
   # Install desktop file
@@ -41,6 +42,6 @@ package() {
   # Install license
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   
-  # Удаляем файлы для разработки, чтобы оставить только необходимое для работы
+  # Remove development files
   rm -rf "$pkgdir"/usr/lib/python*/site-packages/swwwgui-*.egg-info
 } 

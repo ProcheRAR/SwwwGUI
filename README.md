@@ -15,14 +15,14 @@ A modern GTK4 and Libadwaita based GUI for the swww wallpaper manager for Waylan
 
 ### Arch Linux
 
-You can build and install the package using the included PKGBUILD:
+You can build and install the package using standard makepkg:
 
 ```bash
 # Clone the repository
 git clone https://github.com/ProcheRAR/SwwwGUI.git
 cd SwwwGUI
 
-# Build and install
+# Build and install the package
 makepkg -si
 ```
 
