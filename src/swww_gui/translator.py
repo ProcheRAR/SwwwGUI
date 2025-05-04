@@ -99,7 +99,20 @@ class Translator:
                 "matugen_integration": "Material You Integration",
                 "use_matugen": "Use Matugen Theme",
                 "matugen_description": "Generate Material You theme based on wallpaper",
-                "matugen_enabled": "Material You theme generation enabled"
+                "matugen_enabled": "Material You theme generation enabled",
+                
+                # About dialog
+                "about": "About",
+                "version": "Version",
+                "github_repo": "GitHub Repository",
+                "visit_repo": "Visit Repository",
+                "reset_settings": "Reset settings to defaults",
+                "settings_reset": "Settings reset to defaults",
+                
+                # Image view
+                "maximize_view": "Maximize view",
+                "maximized_view": "Maximized view",
+                "normal_view": "Normal view"
             },
             "ru": {
                 "app_title": "SwwwGui",
@@ -175,7 +188,20 @@ class Translator:
                 "matugen_integration": "Интеграция Matugen",
                 "use_matugen": "Использовать Matugen",
                 "matugen_description": "Генерировать тему Material You на основе обоев",
-                "matugen_enabled": "Генерация тем Material You включена"
+                "matugen_enabled": "Генерация тем Material You включена",
+                
+                # About dialog
+                "about": "О Программе",
+                "version": "Версия",
+                "github_repo": "Репозиторий GitHub",
+                "visit_repo": "Перейти в репозиторий",
+                "reset_settings": "Сбросить настройки",
+                "settings_reset": "Настройки сброшены",
+                
+                # Image view
+                "maximize_view": "Увеличить просмотр",
+                "maximized_view": "Просмотр увеличен",
+                "normal_view": "Обычный просмотр"
             }
         }
     

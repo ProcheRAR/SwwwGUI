@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=SwwwGui
+Comment=Modern GUI for swww wallpaper daemon
+GenericName=Wallpaper Manager
+Exec=swwwgui
+Icon=swwwgui
+Terminal=false
+Type=Application
+Categories=Utility;GTK;Graphics;
+Keywords=Wallpaper;swww;wayland; 

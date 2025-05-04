@@ -29,6 +29,19 @@ class EffectsPanel(Gtk.Box):
         self.set_margin_end(12)
         self.set_vexpand(True)
         
+        # Create reset button
+        reset_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        reset_box.set_halign(Gtk.Align.END)
+        reset_box.set_margin_bottom(12)
+        
+        reset_button = Gtk.Button()
+        reset_button.set_icon_name("edit-clear-symbolic")
+        reset_button.set_tooltip_text(self.translator.translate("reset_settings"))
+        reset_button.connect("clicked", self.on_reset_clicked)
+        reset_box.append(reset_button)
+        
+        self.append(reset_box)
+        
         # Create switcher bar
         switcher = Adw.ViewSwitcherBar()
         switcher.set_stack(self.stack)
@@ -576,3 +589,28 @@ class EffectsPanel(Gtk.Box):
         current_selected = self.filter_row.get_selected()
         self.filter_row.set_model(string_list)
         self.filter_row.set_selected(current_selected)
+
+    def on_reset_clicked(self, button):
+        """Reset all effects settings to default values."""
+        # Reset transition settings
+        self.transition_type_row.set_selected(1)  # Default to 'simple'
+        self.transition_step_row.set_value(2)
+        self.transition_fps_row.set_value(30)
+        self.transition_duration_row.set_value(3.0)
+        
+        # Reset image settings
+        self.resize_mode_row.set_selected(0)  # Default to 'crop'
+        self.fill_color_entry.set_text("000000")
+        self.filter_row.set_selected(4)  # Default to 'Lanczos3'
+        
+        # Reset advanced settings
+        self.transition_angle_row.set_value(45)
+        self.transition_wave_entry.set_text("20,20")
+        self.transition_pos_row.set_selected(0)  # Default to 'center'
+        self.invert_y_row.set_active(False)
+        self.transition_bezier_entry.set_text(".54,0,.34,.99")
+        
+        # Show confirmation toast
+        toast = Adw.Toast.new(self.translator.translate("settings_reset"))
+        toast.set_timeout(2)
+        self.parent_window.add_toast(toast)

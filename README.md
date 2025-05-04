@@ -17,9 +17,11 @@ A modern GTK 4 GUI for swww - an efficient animated wallpaper daemon for Wayland
   - Any
   - Directional (left, right, top, bottom)
 - Material You theme integration with Matugen
+- Reset settings button to quickly restore defaults
 - JSON settings for storing preferences
 - Search functionality
 - Remembers last used folder and settings
+- About page with GitHub repository link
 
 ## Dependencies
 
@@ -32,10 +34,26 @@ A modern GTK 4 GUI for swww - an efficient animated wallpaper daemon for Wayland
 
 ## Installation
 
+### AUR (Arch User Repository)
+
+If you're using Arch Linux or an Arch-based distribution, you can install SwwwGui from the AUR:
+
+```bash
+yay -S swwwgui
+```
+
+or 
+
+```bash
+paru -S swwwgui
+```
+
+### Manual Installation
+
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/swwwgui.git
-cd swwwgui
+git clone https://github.com/ProcheRAR/SwwwGUI.git
+cd SwwwGUI
 ```
 
 2. Install Python dependencies:
@@ -75,17 +93,8 @@ cd /usr/local/share/swwwgui
 sudo python compile_resources.py
 
 # Create desktop entry
-cat <<EOF | sudo tee /usr/share/applications/swwwgui.desktop
-[Desktop Entry]
-Name=SwwwGui
-Comment=GUI for swww wallpaper daemon
-Exec=swwwgui
-Icon=preferences-desktop-wallpaper
-Terminal=false
-Type=Application
-Categories=Utility;GTK;
-Keywords=Wallpaper;swww;
-EOF
+sudo cp data/swwwgui.desktop /usr/share/applications/
+sudo cp data/icons/swwwgui.svg /usr/share/icons/hicolor/scalable/apps/
 ```
 
 ## Usage
@@ -95,6 +104,7 @@ EOF
 3. **Configure Effects**: Choose transition type, speed, and other effects.
 4. **Apply**: Click the "Apply" button to set the wallpaper using swww.
 5. **Material You**: Enable Material You theme generation in Settings → Matugen to automatically generate a matching color theme.
+6. **Reset Settings**: Use the reset button in the effects panel to restore default settings.
 
 ## Initial Setup
 
