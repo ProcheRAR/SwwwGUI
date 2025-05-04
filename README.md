@@ -51,8 +51,6 @@ For more detailed instructions, see [INSTALL_AUR.md](INSTALL_AUR.md).
 ## Dependencies
 
 - Python 3.8+
-- GTK4
-- Libadwaita
 - PyGObject
 - swww (daemon)
 - Optional: matugen (for dynamic theme generation)
