@@ -3,12 +3,12 @@
 pkgname=swwwgui
 pkgver=1.0.0
 pkgrel=1
-pkgdesc="A modern GTK4 GUI for swww wallpaper daemon with Material You integration"
+pkgdesc="A modern GTK4 GUI for swww wallpaper daemon with matugen integration"
 arch=('any')
 url="https://github.com/ProcheRAR/SwwwGUI"
 license=('GPL3')
 depends=('python' 'python-gobject' 'gtk4' 'libadwaita' 'swww')
-optdepends=('matugen: for Material You theme generation')
+optdepends=('matugen: for matugen theme generation')
 makedepends=('python-setuptools' 'python-pip' 'python-wheel')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
 sha256sums=('SKIP')

@@ -15,10 +15,10 @@ except Exception as e:
 setup(
     name="swwwgui",
     version="1.0.0",
-    description="A GTK4 GUI for swww Wayland wallpaper daemon",
-    author="SwwwGui Contributors",
+    description="A modern GTK4 GUI for swww wallpaper daemon with matugen integration",
+    author="ProcheRAR",
     author_email="your.email@example.com",
-    url="https://github.com/yourusername/swwwgui",
+    url="https://github.com/ProcheRAR/SwwwGUI",
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
@@ -38,5 +38,5 @@ setup(
         "Programming Language :: Python :: 3",
         "Topic :: Desktop Environment :: Window Managers",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 ) 

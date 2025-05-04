@@ -165,12 +165,12 @@ class Translator:
             "Mitchell": "Mitchell",
             "Lanczos3": "Lanczos3",
             
-            # Material You options
-            "matugen_settings": "Material You",
-            "matugen_integration": "Material You Integration",
-            "use_matugen": "Use Matugen Theme",
-            "matugen_description": "Generate Material You theme based on wallpaper",
-            "matugen_enabled": "Material You theme generation enabled",
+            # matugen options
+            "matugen_settings": "matugen",
+            "matugen_integration": "matugen Integration",
+            "use_matugen": "Use matugen Theme",
+            "matugen_description": "Generate matugen theme based on wallpaper",
+            "matugen_enabled": "matugen theme generation enabled",
             
             # Position values for transitions
             "center": "Center",
@@ -294,12 +294,12 @@ class Translator:
             "Mitchell": "Митчелл",
             "Lanczos3": "Ланцош3",
             
-            # Material You options
-            "matugen_settings": "Material You",
-            "matugen_integration": "Интеграция Matugen",
-            "use_matugen": "Использовать Matugen",
-            "matugen_description": "Генерировать тему Material You на основе обоев",
-            "matugen_enabled": "Генерация тем Material You включена",
+            # matugen options
+            "matugen_settings": "matugen",
+            "matugen_integration": "Интеграция matugen",
+            "use_matugen": "Использовать matugen",
+            "matugen_description": "Генерировать тему matugen на основе обоев",
+            "matugen_enabled": "Генерация тем matugen включена",
             
             # Position values for transitions
             "center": "Центр",
