@@ -6,7 +6,6 @@ A modern GTK4 and Libadwaita based GUI for the swww wallpaper manager for Waylan
 
 - Intuitive GUI for setting wallpapers using swww
 - Transition effects with live preview
-- Categorized wallpaper browsing
 - matugen integration with dynamic themes
 - Multilingual support with easy translation system
 - Modern interface based on GTK4 and Libadwaita
