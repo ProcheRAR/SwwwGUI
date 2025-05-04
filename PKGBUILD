@@ -10,22 +10,22 @@ license=('GPL3')
 depends=('python' 'python-gobject' 'gtk4' 'libadwaita' 'swww')
 optdepends=('matugen: for matugen theme generation')
 makedepends=('python-setuptools' 'python-pip' 'python-wheel')
-source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/heads/main.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
-  cd "SwwwGUI-$pkgver"
+  cd "SwwwGUI-main"
   # Compile GResource file
   python compile_resources.py
 }
 
 build() {
-  cd "SwwwGUI-$pkgver"
+  cd "SwwwGUI-main"
   python setup.py build
 }
 
 package() {
-  cd "SwwwGUI-$pkgver"
+  cd "SwwwGUI-main"
   python setup.py install --root="$pkgdir" --optimize=1 --skip-build
   
   # Install desktop file
