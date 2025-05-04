@@ -15,7 +15,7 @@ pkgbase = swwwgui
 	depends = swww
 	optdepends = matugen: for matugen theme generation
 	options = !emptydirs
-	source = swwwgui-1.0.0.tar.gz::https://github.com/ProcheRAR/SwwwGUI/archive/refs/tags/v1.0.0.tar.gz
+	source = swwwgui-1.0.0.tar.gz::https://github.com/ProcheRAR/SwwwGUI/archive/refs/heads/main.tar.gz
 	sha256sums = SKIP
 
 pkgname = swwwgui 
