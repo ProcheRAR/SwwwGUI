@@ -52,3 +52,7 @@ venv.bak/
 
 # Custom
 .DS_Store 
+
+# Absolute paths
+~/
+/home/ 
