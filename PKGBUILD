@@ -11,11 +11,11 @@ depends=('python' 'python-gobject' 'gtk4' 'libadwaita' 'swww')
 optdepends=('matugen: for matugen theme generation')
 makedepends=('python-setuptools' 'python-pip' 'python-wheel')
 options=('!emptydirs')
-source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/heads/main.tar.gz")
+source=(".")
 sha256sums=('SKIP')
 
 prepare() {
-  cd "SwwwGUI-main"
+  cd "${srcdir}"
   # Compile GResource file
   python compile_resources.py
   
@@ -24,12 +24,12 @@ prepare() {
 }
 
 build() {
-  cd "SwwwGUI-main"
+  cd "${srcdir}"
   python setup.py build
 }
 
 package() {
-  cd "SwwwGUI-main"
+  cd "${srcdir}"
   python setup.py install --root="$pkgdir" --optimize=1 --skip-build
   
   # Install desktop file
