@@ -1,8 +1,11 @@
 import gi
+import logging
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw
+
+logger = logging.getLogger(__name__)
 
 
 class EffectsPanel(Gtk.Box):
@@ -65,7 +68,7 @@ class EffectsPanel(Gtk.Box):
         header_box.set_margin_bottom(12)
         
         # Create the preferences group
-        title = "Эффекты" if self.translator.get_current_language() == "ru" else "Effects"
+        title = self.translator.translate("effects")
         group = Adw.PreferencesGroup(title=title)
         box.append(group)
         
@@ -76,7 +79,7 @@ class EffectsPanel(Gtk.Box):
         
         reset_button = Gtk.Button()
         reset_button.set_icon_name("edit-clear-symbolic")
-        reset_text = "Сбросить настройки перехода" if self.translator.get_current_language() == "ru" else "Reset Transition Settings"
+        reset_text = self.translator.translate("reset_transition_settings")
         reset_button.set_label(reset_text)
         reset_button.set_tooltip_text(reset_text)
         reset_button.add_css_class("destructive-action")
@@ -93,23 +96,10 @@ class EffectsPanel(Gtk.Box):
         transitions = self.swww_manager.get_transitions()
         string_list = Gtk.StringList()
         
-        # Прямое задание переводов для типов переходов
-        translations = {
-            "none": "Нет" if self.translator.get_current_language() == "ru" else "None",
-            "simple": "Простой" if self.translator.get_current_language() == "ru" else "Simple",
-            "fade": "Затухание" if self.translator.get_current_language() == "ru" else "Fade",
-            "left": "Слева" if self.translator.get_current_language() == "ru" else "Left",
-            "right": "Справа" if self.translator.get_current_language() == "ru" else "Right",
-            "top": "Сверху" if self.translator.get_current_language() == "ru" else "Top",
-            "bottom": "Снизу" if self.translator.get_current_language() == "ru" else "Bottom",
-            "wipe": "Вытирание" if self.translator.get_current_language() == "ru" else "Wipe",
-            "wave": "Волна" if self.translator.get_current_language() == "ru" else "Wave",
-            "grow": "Рост" if self.translator.get_current_language() == "ru" else "Grow",
-            "center": "Центр" if self.translator.get_current_language() == "ru" else "Center",
-            "any": "Любая позиция" if self.translator.get_current_language() == "ru" else "Any Position",
-            "outer": "Снаружи" if self.translator.get_current_language() == "ru" else "Outer",
-            "random": "Случайный" if self.translator.get_current_language() == "ru" else "Random"
-        }
+        # Use translator for transition types
+        translations = {}
+        for transition in transitions:
+            translations[transition] = self.translator.translate(transition)
         
         for transition in transitions:
             string_list.append(translations.get(transition, transition))
@@ -143,7 +133,7 @@ class EffectsPanel(Gtk.Box):
         group.add(duration_row)
         
         # Add page to stack with icon
-        title = "Переходы" if self.translator.get_current_language() == "ru" else "Transition"
+        title = self.translator.translate("transition")
         self.stack.add_titled_with_icon(scroll, "transitions", title, "view-refresh-symbolic")
         
         # Connect signals
@@ -164,7 +154,7 @@ class EffectsPanel(Gtk.Box):
         scroll.set_child(box)
         
         # Create the preferences group
-        title = "Размер изображения" if self.translator.get_current_language() == "ru" else "Resize"
+        title = self.translator.translate("resize")
         group = Adw.PreferencesGroup(title=title)
         box.append(group)
         
@@ -175,7 +165,7 @@ class EffectsPanel(Gtk.Box):
         
         reset_button = Gtk.Button()
         reset_button.set_icon_name("edit-clear-symbolic")
-        reset_text = "Сбросить настройки размера" if self.translator.get_current_language() == "ru" else "Reset Resize Settings"
+        reset_text = self.translator.translate("reset_resize_settings")
         reset_button.set_label(reset_text)
         reset_button.set_tooltip_text(reset_text)
         reset_button.add_css_class("destructive-action")
@@ -192,12 +182,10 @@ class EffectsPanel(Gtk.Box):
         resize_modes = self.swww_manager.get_resize_modes()
         string_list = Gtk.StringList()
         
-        # Прямое задание переводов для режимов изменения размера
-        resize_translations = {
-            "crop": "Обрезать" if self.translator.get_current_language() == "ru" else "Crop",
-            "fit": "Подогнать" if self.translator.get_current_language() == "ru" else "Fit",
-            "no": "Нет" if self.translator.get_current_language() == "ru" else "No"
-        }
+        # Use translator for resize modes
+        resize_translations = {}
+        for mode in resize_modes:
+            resize_translations[mode] = self.translator.translate(mode)
         
         for mode in resize_modes:
             string_list.append(resize_translations.get(mode, mode))
@@ -226,21 +214,16 @@ class EffectsPanel(Gtk.Box):
         
         # Scaling filter
         filter_row = Adw.ComboRow()
-        filter_title = "Фильтр" if self.translator.get_current_language() == "ru" else "Filter"
-        filter_row.set_title(filter_title)
+        filter_row.set_title(self.translator.translate("filter"))
         
         # Create string list for filters
         filters = self.swww_manager.get_filters()
         string_list = Gtk.StringList()
         
-        # Оставляем только оригинальные технические обозначения фильтров
-        filter_translations = {
-            "Nearest": "Nearest",
-            "Bilinear": "Bilinear",
-            "CatmullRom": "CatmullRom",
-            "Mitchell": "Mitchell",
-            "Lanczos3": "Lanczos3"
-        }
+        # Use translator for filter types
+        filter_translations = {}
+        for filter_name in filters:
+            filter_translations[filter_name] = self.translator.translate(filter_name)
         
         for filter_name in filters:
             string_list.append(filter_translations.get(filter_name, filter_name))
@@ -253,7 +236,7 @@ class EffectsPanel(Gtk.Box):
         group.add(filter_row)
         
         # Add page to stack with icon
-        title = "Размер" if self.translator.get_current_language() == "ru" else "Resize"
+        title = self.translator.translate("resize")
         self.stack.add_titled_with_icon(scroll, "image", title, "image-x-generic-symbolic")
     
     def setup_advanced_tab(self):
@@ -271,7 +254,7 @@ class EffectsPanel(Gtk.Box):
         scroll.set_child(box)
         
         # Create the preferences group for wipe/wave settings
-        title = "Дополнительные настройки" if self.translator.get_current_language() == "ru" else "Advanced Settings"
+        title = self.translator.translate("advanced")
         wipe_group = Adw.PreferencesGroup(title=title)
         box.append(wipe_group)
         
@@ -284,8 +267,7 @@ class EffectsPanel(Gtk.Box):
         
         # Wave dimensions (for wave transition)
         wave_row = Adw.ActionRow()
-        wave_title = "Размеры волны (x,y)" if self.translator.get_current_language() == "ru" else "Wave Dimensions (x,y)"
-        wave_row.set_title(wave_title)
+        wave_row.set_title(self.translator.translate("wave_dimensions"))
         
         # Create entry widget
         wave_entry = Gtk.Entry()
@@ -299,7 +281,7 @@ class EffectsPanel(Gtk.Box):
         wipe_group.add(wave_row)
         
         # Create the preferences group for grow/outer settings
-        position_title = "Положение перехода" if self.translator.get_current_language() == "ru" else "Transition Position"
+        position_title = self.translator.translate("transition_position")
         grow_group = Adw.PreferencesGroup(title=position_title)
         box.append(grow_group)
         
@@ -312,18 +294,10 @@ class EffectsPanel(Gtk.Box):
                      "top-left", "top-right", "bottom-left", "bottom-right"]
         string_list = Gtk.StringList()
         
-        # Прямое задание переводов для позиций
-        position_translations = {
-            "center": "Центр" if self.translator.get_current_language() == "ru" else "Center",
-            "top": "Верх" if self.translator.get_current_language() == "ru" else "Top",
-            "left": "Лево" if self.translator.get_current_language() == "ru" else "Left",
-            "right": "Право" if self.translator.get_current_language() == "ru" else "Right",
-            "bottom": "Низ" if self.translator.get_current_language() == "ru" else "Bottom",
-            "top-left": "Верх-Лево" if self.translator.get_current_language() == "ru" else "Top-Left",
-            "top-right": "Верх-Право" if self.translator.get_current_language() == "ru" else "Top-Right",
-            "bottom-left": "Низ-Лево" if self.translator.get_current_language() == "ru" else "Bottom-Left",
-            "bottom-right": "Низ-Право" if self.translator.get_current_language() == "ru" else "Bottom-Right"
-        }
+        # Use translator for positions
+        position_translations = {}
+        for pos in positions:
+            position_translations[pos] = self.translator.translate(pos)
         
         for pos in positions:
             string_list.append(position_translations.get(pos, pos))
@@ -343,8 +317,7 @@ class EffectsPanel(Gtk.Box):
         
         # Transition Bezier
         bezier_row = Adw.ActionRow()
-        bezier_title = "Кривая Безье" if self.translator.get_current_language() == "ru" else "Bezier Curve"
-        bezier_row.set_title(bezier_title)
+        bezier_row.set_title(self.translator.translate("bezier_curve"))
         
         # Create entry widget
         bezier_entry = Gtk.Entry()
@@ -365,7 +338,7 @@ class EffectsPanel(Gtk.Box):
         
         reset_button = Gtk.Button()
         reset_button.set_icon_name("edit-clear-symbolic")
-        reset_text = "Сбросить доп. настройки" if self.translator.get_current_language() == "ru" else "Reset Advanced Settings"
+        reset_text = self.translator.translate("reset_advanced_settings")
         reset_button.set_label(reset_text)
         reset_button.set_tooltip_text(reset_text)
         reset_button.add_css_class("destructive-action")
@@ -592,11 +565,11 @@ class EffectsPanel(Gtk.Box):
         
         wave_parent = self.transition_wave_entry.get_parent()
         if isinstance(wave_parent, Adw.ActionRow):
-            wave_parent.set_title(self.translator.translate("transition_wave"))
+            wave_parent.set_title(self.translator.translate("wave_dimensions"))
         
         bezier_parent = self.transition_bezier_entry.get_parent()
         if isinstance(bezier_parent, Adw.ActionRow):
-            bezier_parent.set_title(self.translator.translate("transition_bezier"))
+            bezier_parent.set_title(self.translator.translate("bezier_curve"))
         
         self.transition_angle_row.set_title(self.translator.translate("transition_angle"))
         self.transition_pos_row.set_title(self.translator.translate("transition_position"))
@@ -606,7 +579,7 @@ class EffectsPanel(Gtk.Box):
         # Transition types
         string_list = Gtk.StringList()
         for transition in self.transition_types:
-            string_list.append(self.transition_translations.get(transition, transition))
+            string_list.append(self.translator.translate(transition))
         
         current_selected = self.transition_type_row.get_selected()
         self.transition_type_row.set_model(string_list)
@@ -615,7 +588,7 @@ class EffectsPanel(Gtk.Box):
         # Resize modes
         string_list = Gtk.StringList()
         for mode in self.resize_modes:
-            string_list.append(self.resize_translations.get(mode, mode))
+            string_list.append(self.translator.translate(mode))
         
         current_selected = self.resize_mode_row.get_selected()
         self.resize_mode_row.set_model(string_list)
@@ -624,7 +597,7 @@ class EffectsPanel(Gtk.Box):
         # Filters
         string_list = Gtk.StringList()
         for filter_name in self.filters:
-            string_list.append(self.filter_translations.get(filter_name, filter_name))
+            string_list.append(self.translator.translate(filter_name))
         
         current_selected = self.filter_row.get_selected()
         self.filter_row.set_model(string_list)
@@ -639,7 +612,9 @@ class EffectsPanel(Gtk.Box):
         self.transition_duration_row.set_value(3.0)
         
         # Show confirmation toast
-        toast = Adw.Toast.new(self.translator.translate("transition_settings_reset"))
+        toast_msg = self.translator.translate("transition_settings_reset")
+        logger.debug(f"Toast message for transition reset: {toast_msg}")
+        toast = Adw.Toast.new(toast_msg)
         toast.set_timeout(2)
         self.parent_window.add_toast(toast)
 
@@ -651,7 +626,9 @@ class EffectsPanel(Gtk.Box):
         self.filter_row.set_selected(4)  # Default to 'Lanczos3'
         
         # Show confirmation toast
-        toast = Adw.Toast.new(self.translator.translate("resize_settings_reset"))
+        toast_msg = self.translator.translate("resize_settings_reset")
+        logger.debug(f"Toast message for resize reset: {toast_msg}")
+        toast = Adw.Toast.new(toast_msg)
         toast.set_timeout(2)
         self.parent_window.add_toast(toast)
 
@@ -665,7 +642,9 @@ class EffectsPanel(Gtk.Box):
         self.transition_bezier_entry.set_text(".54,0,.34,.99")
         
         # Show confirmation toast
-        toast = Adw.Toast.new(self.translator.translate("advanced_settings_reset"))
+        toast_msg = self.translator.translate("advanced_settings_reset")
+        logger.debug(f"Toast message for advanced reset: {toast_msg}")
+        toast = Adw.Toast.new(toast_msg)
         toast.set_timeout(2)
         self.parent_window.add_toast(toast)
 

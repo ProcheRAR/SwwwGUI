@@ -10,10 +10,10 @@ import subprocess
 from pathlib import Path
 import logging
 
-from swww_gui.ui.image_view import ImageView
-from swww_gui.ui.file_chooser import FileChooser
-from swww_gui.ui.effects_panel import EffectsPanel
-from swww_gui.swww_manager import SwwwManager
+from .ui.image_view import ImageView
+from .ui.file_chooser import FileChooser
+from .ui.effects_panel import EffectsPanel
+from .swww_manager import SwwwManager
 
 logger = logging.getLogger(__name__)
 
@@ -350,6 +350,25 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         self.language_page = page
         
         group.add(language_row)
+        
+        # Add translation utilities group
+        translation_group = Adw.PreferencesGroup()
+        translation_group.set_title(self.application.translator.translate("translation_tools"))
+        page.add(translation_group)
+        
+        # Add a row with a button to create a translation template
+        template_row = Adw.ActionRow()
+        template_row.set_title(self.application.translator.translate("create_translation_template"))
+        template_row.set_subtitle(self.application.translator.translate("create_template_description"))
+        
+        template_button = Gtk.Button()
+        template_button.set_icon_name("document-new-symbolic")
+        template_button.set_valign(Gtk.Align.CENTER)
+        template_button.connect("clicked", self._on_create_template_clicked)
+        template_row.add_suffix(template_button)
+        
+        translation_group.add(template_row)
+        
         dialog.add(page)
     
     def _add_matugen_settings_page(self, dialog):
@@ -357,35 +376,19 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         # Create matugen page
         page = Adw.PreferencesPage()
         
-        # Use capitalized Matugen
-        if self.application.translator.get_current_language() == "ru":
-            page.set_title("Matugen")
-        else:
-            page.set_title("Matugen")
-            
+        # Use capitalized Matugen as it's a brand name
+        page.set_title("Matugen")
         page.set_icon_name("color-select-symbolic")
         
         # Matugen group
         group = Adw.PreferencesGroup()
-        
-        # Use capitalized Matugen
-        if self.application.translator.get_current_language() == "ru":
-            group.set_title("Интеграция Matugen")
-        else:
-            group.set_title("Matugen Integration")
-            
+        group.set_title(self.application.translator.translate("matugen_integration"))
         page.add(group)
         
         # Matugen switch row
         matugen_row = Adw.SwitchRow()
-        
-        # Use capitalized Matugen
-        if self.application.translator.get_current_language() == "ru":
-            matugen_row.set_title("Использовать Matugen")
-            matugen_row.set_subtitle("Генерировать тему Material You на основе обоев")
-        else:
-            matugen_row.set_title("Use Matugen")
-            matugen_row.set_subtitle("Generate Material You theme based on wallpaper")
+        matugen_row.set_title(self.application.translator.translate("use_matugen"))
+        matugen_row.set_subtitle(self.application.translator.translate("matugen_description"))
         
         # Set current state from config
         use_matugen = self.config.get('use_matugen', False)
@@ -407,9 +410,7 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         # Create about page
         page = Adw.PreferencesPage()
         
-        # Используем явные строки вместо переводов
-        about_title = "О Программе" if self.application.translator.get_current_language() == "ru" else "About"
-        page.set_title(about_title)
+        page.set_title(self.application.translator.translate("about"))
         page.set_icon_name("help-about-symbolic")
         
         # About group
@@ -418,8 +419,7 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         
         # Version
         version_row = Adw.ActionRow()
-        version_title = "Версия" if self.application.translator.get_current_language() == "ru" else "Version"
-        version_row.set_title(version_title)
+        version_row.set_title(self.application.translator.translate("version"))
         version_row.set_subtitle("1.0.0")
         group.add(version_row)
         
@@ -431,8 +431,7 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         # Visit button
         visit_button = Gtk.Button()
         visit_button.set_icon_name("web-browser-symbolic")
-        visit_repo_text = "Перейти в репозиторий" if self.application.translator.get_current_language() == "ru" else "Visit Repository"
-        visit_button.set_tooltip_text(visit_repo_text)
+        visit_button.set_tooltip_text(self.application.translator.translate("visit_repo"))
         visit_button.set_valign(Gtk.Align.CENTER)
         visit_button.connect("clicked", self._on_visit_repo_clicked)
         repo_row.add_suffix(visit_button)
@@ -441,28 +440,27 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         
         # Reset settings group
         reset_group = Adw.PreferencesGroup()
-        reset_title = "Сброс настроек" if self.application.translator.get_current_language() == "ru" else "Reset Settings"
-        reset_group.set_title(reset_title)
+        reset_group.set_title(self.application.translator.translate("reset_settings"))
         page.add(reset_group)
         
         # Reset settings button
         reset_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         reset_box.set_halign(Gtk.Align.CENTER)
-        reset_box.set_margin_top(24)  # Увеличенный отступ сверху
-        reset_box.set_margin_bottom(24)  # Увеличенный отступ снизу
+        reset_box.set_margin_top(24)
+        reset_box.set_margin_bottom(24)
         reset_box.set_hexpand(True)
         reset_box.set_margin_start(24)
         reset_box.set_margin_end(24)
         
         reset_button = Gtk.Button()
-        reset_text = "Сбросить все настройки" if self.application.translator.get_current_language() == "ru" else "Reset All Settings"
+        reset_text = self.application.translator.translate("reset_all_settings")
         
-        # Добавляем иконку к кнопке
+        # Add icon to button
         reset_icon = Gtk.Image.new_from_icon_name("edit-clear-all-symbolic")
-        reset_button.set_child(reset_icon)  # Установим сначала иконку
-        reset_button.set_label(reset_text)  # А потом добавим текст - это создаст box с иконкой и текстом
+        reset_button.set_child(reset_icon)
+        reset_button.set_label(reset_text)
         
-        # Добавляем больше CSS классов для заметности
+        # Add more CSS classes for visibility
         reset_button.add_css_class("destructive-action")
         reset_button.add_css_class("pill")
         reset_button.add_css_class("suggested-action")
@@ -489,9 +487,8 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         # Reload settings
         self.load_settings()
         
-        # Show success toast with hardcoded strings
-        success_text = "Настройки успешно сброшены" if self.application.translator.get_current_language() == "ru" else "Settings reset successfully"
-        toast = Adw.Toast.new(success_text)
+        # Show success toast
+        toast = Adw.Toast.new(self.application.translator.translate("settings_reset_success"))
         toast.set_timeout(2)
         self.add_toast(toast)
 
@@ -532,7 +529,6 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
     def _update_settings_pages(self):
         """Update settings dialog pages with current translations."""
         tr = self.application.translator
-        is_russian = tr.get_current_language() == "ru"
         
         # Update language settings
         if hasattr(self, 'language_page'):
@@ -541,31 +537,26 @@ class SwwwGuiWindow(Adw.ApplicationWindow):
         if hasattr(self, 'language_row'):
             self.language_row.set_title(tr.translate("language"))
         
-        # Update matugen settings - use hardcoded strings instead of translations
+        # Update matugen settings
         if hasattr(self, 'matugen_page'):
-            self.matugen_page.set_title("Matugen")  # Brand name - no translation needed
+            # 'Matugen' is a brand name, no need to translate
+            self.matugen_page.set_title("Matugen")
             
         if hasattr(self, 'matugen_group'):
-            matugen_group_title = "Интеграция Matugen" if is_russian else "Matugen Integration"
-            self.matugen_group.set_title(matugen_group_title)
+            self.matugen_group.set_title(tr.translate("matugen_integration"))
             
         if hasattr(self, 'matugen_row'):
-            matugen_row_title = "Использовать Matugen" if is_russian else "Use Matugen"
-            matugen_subtitle = "Генерировать тему Material You на основе обоев" if is_russian else "Generate Material You theme based on wallpaper"
-            self.matugen_row.set_title(matugen_row_title)
-            self.matugen_row.set_subtitle(matugen_subtitle)
+            self.matugen_row.set_title(tr.translate("use_matugen"))
+            self.matugen_row.set_subtitle(tr.translate("matugen_description"))
         
         # Update about page
         if hasattr(self, 'about_page'):
-            about_title = "О Программе" if is_russian else "About"
-            self.about_page.set_title(about_title)
+            self.about_page.set_title(tr.translate("about"))
             
-        # Update reset group title and button in About page using hardcoded strings
+        # Update reset group title and button in About page
         if hasattr(self, 'reset_group') and hasattr(self, 'reset_button'):
-            reset_title = "Сброс настроек" if is_russian else "Reset Settings"
-            reset_button_text = "Сбросить все настройки" if is_russian else "Reset All Settings"
-            self.reset_group.set_title(reset_title)
-            self.reset_button.set_label(reset_button_text)
+            self.reset_group.set_title(tr.translate("reset_settings"))
+            self.reset_button.set_label(tr.translate("reset_all_settings"))
 
     def on_search_changed(self, entry):
         """Handle search in the file chooser."""
@@ -795,4 +786,24 @@ set = true
             # Show error toast
             toast = Adw.Toast.new(self.application.translator.translate("error"))
             toast.set_timeout(2)
+            self.add_toast(toast)
+
+    def _on_create_template_clicked(self, button):
+        """Handle click on the create template button."""
+        # Create directory in user's config
+        config_dir = Path.home() / '.config' / 'swww-gui' / 'translations'
+        os.makedirs(config_dir, exist_ok=True)
+        
+        # Generate full path for template
+        template_path = config_dir / 'template.json'
+        
+        # Create a translation template
+        created_path = self.application.translator.create_translation_template(str(template_path))
+        
+        if created_path:
+            # Show success toast
+            toast = Adw.Toast.new(
+                self.application.translator.translate("template_created").format(created_path)
+            )
+            toast.set_timeout(5)  # Longer timeout to show the path
             self.add_toast(toast)

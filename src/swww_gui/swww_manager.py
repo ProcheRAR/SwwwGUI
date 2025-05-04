@@ -1,94 +1,102 @@
-import subprocess
-import json
+import logging
+from typing import List, Dict, Any, Optional, Union
+import time
 import os
-import shutil
 from pathlib import Path
 
+from .utils import run_command, is_executable_available
+from .constants import (
+    DEFAULT_TRANSITION_TYPE, DEFAULT_TRANSITION_STEP, DEFAULT_TRANSITION_FPS,
+    DEFAULT_TRANSITION_DURATION, DEFAULT_RESIZE_MODE, DEFAULT_FILL_COLOR,
+    DEFAULT_FILTER_TYPE
+)
+
+logger = logging.getLogger(__name__)
 
 class SwwwManager:
-    """Interface for interacting with swww command-line tool."""
+    """Interface for interacting with swww command-line tool.
     
-    def __init__(self):
+    Provides methods to interact with swww for setting wallpapers,
+    managing daemon, and querying available options.
+    """
+    
+    def __init__(self) -> None:
         """Initialize the swww manager."""
-        self.swww_path = self._find_swww_binary()
-        self.daemon_path = self._find_swww_daemon_binary()
+        self.swww_binary = "swww"
+        self.daemon_binary = "swww-daemon"
         
-    def _find_swww_binary(self):
-        """Find the swww binary in PATH."""
-        return shutil.which("swww") or ""
+    def is_swww_installed(self) -> bool:
+        """Check if swww is installed.
         
-    def _find_swww_daemon_binary(self):
-        """Find the swww-daemon binary in PATH."""
-        return shutil.which("swww-daemon") or ""
+        Returns:
+            bool: True if both swww and swww-daemon are available, False otherwise.
+        """
+        return (is_executable_available(self.swww_binary) and 
+                is_executable_available(self.daemon_binary))
         
-    def is_swww_installed(self):
-        """Check if swww is installed."""
-        return bool(self.swww_path and self.daemon_path)
+    def is_daemon_running(self) -> bool:
+        """Check if swww-daemon is running.
         
-    def is_daemon_running(self):
-        """Check if swww-daemon is running."""
-        try:
-            result = subprocess.run(
-                [self.swww_path, "query"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                encoding="utf-8",
-                timeout=2
-            )
-            return result.returncode == 0
-        except (subprocess.SubprocessError, FileNotFoundError):
-            return False
+        Returns:
+            bool: True if daemon is running, False otherwise.
+        """
+        success, _, _ = run_command([self.swww_binary, "query"], check=False)
+        return success
             
-    def start_daemon(self):
-        """Start the swww-daemon."""
-        if not self.daemon_path:
+    def start_daemon(self) -> bool:
+        """Start the swww-daemon.
+        
+        Returns:
+            bool: True if daemon started successfully, False otherwise.
+        """
+        if not is_executable_available(self.daemon_binary):
+            logger.error("swww-daemon binary not found")
             return False
             
         try:
-            # Run daemon in background
+            # Run daemon in background using Popen
+            import subprocess
             subprocess.Popen(
-                [self.daemon_path],
+                [self.daemon_binary],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 start_new_session=True
             )
             
-            # Check if daemon started successfully
-            import time
+            # Check if daemon started successfully after a short delay
             time.sleep(1)  # Give daemon time to start
             return self.is_daemon_running()
-        except (subprocess.SubprocessError, FileNotFoundError):
+        except Exception as e:
+            logger.error(f"Failed to start swww-daemon: {e}")
             return False
             
-    def get_monitors(self):
-        """Get list of available monitors."""
+    def get_monitors(self) -> List[str]:
+        """Get list of available monitors.
+        
+        Returns:
+            List[str]: Names of available monitors, or empty list if failed.
+        """
         if not self.is_daemon_running():
             return []
             
-        try:
-            result = subprocess.run(
-                [self.swww_path, "query"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                encoding="utf-8",
-                timeout=2
-            )
-            
-            if result.returncode != 0:
-                return []
-                
-            # Parse monitor names from output
-            monitors = []
-            for line in result.stdout.splitlines():
-                if "Output:" in line:
-                    name = line.split("Output:")[1].strip()
-                    monitors.append(name)
-            return monitors
-        except (subprocess.SubprocessError, FileNotFoundError):
+        success, stdout, _ = run_command([self.swww_binary, "query"], check=False)
+        if not success:
             return []
+                
+        # Parse monitor names from output
+        monitors = []
+        for line in stdout.splitlines():
+            if "Output:" in line:
+                name = line.split("Output:")[1].strip()
+                monitors.append(name)
+        return monitors
             
-    def get_transitions(self):
-        """Get list of available transition types."""
+    def get_transitions(self) -> List[str]:
+        """Get list of available transition types.
+        
+        Returns:
+            List[str]: Available transition types.
+        """
         return [
             "none",
             "simple",
@@ -106,16 +114,24 @@ class SwwwManager:
             "random"
         ]
         
-    def get_resize_modes(self):
-        """Get list of available resize modes."""
+    def get_resize_modes(self) -> List[str]:
+        """Get list of available resize modes.
+        
+        Returns:
+            List[str]: Available resize modes.
+        """
         return [
             "crop",
             "fit",
             "no"
         ]
         
-    def get_filters(self):
-        """Get list of available filters for scaling."""
+    def get_filters(self) -> List[str]:
+        """Get list of available filters for scaling.
+        
+        Returns:
+            List[str]: Available scaling filters.
+        """
         return [
             "Nearest", 
             "Bilinear", 
@@ -124,7 +140,7 @@ class SwwwManager:
             "Lanczos3"
         ]
         
-    def set_wallpaper(self, image_path, options=None):
+    def set_wallpaper(self, image_path: str, options: Optional[Dict[str, Any]] = None) -> bool:
         """Set wallpaper using swww with all available options.
         
         Args:
@@ -148,6 +164,7 @@ class SwwwManager:
             bool: True if successful, False otherwise
         """
         if not self.is_daemon_running() or not os.path.exists(image_path):
+            logger.error(f"Cannot set wallpaper: daemon not running or image not found - {image_path}")
             return False
         
         # Default options
@@ -155,21 +172,21 @@ class SwwwManager:
             options = {}
             
         # Base command
-        cmd = [self.swww_path, "img", image_path]
+        cmd = [self.swww_binary, "img", image_path]
         
         # Add monitor if specified
         if options.get('monitor'):
             cmd.extend(["--outputs", options['monitor']])
         
         # Add resize mode
-        resize_mode = options.get('resize_mode', 'crop')
+        resize_mode = options.get('resize_mode', DEFAULT_RESIZE_MODE)
         if resize_mode == 'no':
             cmd.append("--no-resize")
         else:
             cmd.extend(["--resize", resize_mode])
             
         # Add fill color
-        fill_color = options.get('fill_color', '000000')
+        fill_color = options.get('fill_color', DEFAULT_FILL_COLOR)
         cmd.extend(["--fill-color", fill_color])
         
         # Add filter - only if not doing a fast preview
@@ -179,15 +196,15 @@ class SwwwManager:
             cmd.extend(["--filter", "Nearest"])
         else:
             # For normal mode, use specified filter or default
-            filter_type = options.get('filter', 'Lanczos3')
+            filter_type = options.get('filter', DEFAULT_FILTER_TYPE)
             cmd.extend(["--filter", filter_type])
         
         # Add transition type
-        transition_type = options.get('transition_type', 'simple')
+        transition_type = options.get('transition_type', DEFAULT_TRANSITION_TYPE)
         cmd.extend(["--transition-type", transition_type])
         
         # Add transition step (defaults differ by transition type)
-        default_step = 2 if transition_type == 'simple' else 90
+        default_step = DEFAULT_TRANSITION_STEP if transition_type == 'simple' else 90
         transition_step = options.get('transition_step', default_step)
         cmd.extend(["--transition-step", str(transition_step)])
         
@@ -196,76 +213,70 @@ class SwwwManager:
             cmd.extend(["--transition-duration", str(options['transition_duration'])])
         
         # Add transition fps
-        transition_fps = options.get('transition_fps', 30)
+        transition_fps = options.get('transition_fps', DEFAULT_TRANSITION_FPS)
         cmd.extend(["--transition-fps", str(transition_fps)])
         
-        # Add transition angle for wipe/wave
-        if transition_type in ['wipe', 'wave'] and 'transition_angle' in options:
-            cmd.extend(["--transition-angle", str(options['transition_angle'])])
+        # Add transition-specific options
+        if transition_type == 'wipe':
+            # Add transition angle for wipe
+            if 'transition_angle' in options:
+                cmd.extend(["--transition-angle", str(options['transition_angle'])])
+                
+        elif transition_type == 'wave':
+            # Add transition angle for wave
+            if 'transition_angle' in options:
+                cmd.extend(["--transition-angle", str(options['transition_angle'])])
+                
+            # Add transition wave
+            if 'transition_wave' in options:
+                cmd.extend(["--transition-wave", str(options['transition_wave'])])
+                
+        elif transition_type in ['grow', 'outer', 'center', 'any']:
+            # Add transition position
+            if 'transition_pos' in options:
+                cmd.extend(["--transition-pos", str(options['transition_pos'])])
+                
+            # Add invert_y if specified
+            if options.get('invert_y'):
+                cmd.append("--invert-y")
+                
+        elif transition_type == 'fade':
+            # Add transition bezier
+            if 'transition_bezier' in options:
+                cmd.extend(["--transition-bezier", str(options['transition_bezier'])])
         
-        # Add transition position for grow/outer
-        if transition_type in ['grow', 'outer', 'center', 'any'] and 'transition_pos' in options:
-            cmd.extend(["--transition-pos", options['transition_pos']])
-        
-        # Add invert-y if needed
-        if options.get('invert_y', False):
-            cmd.append("--invert-y")
-        
-        # Add bezier curve for fade transition
-        if transition_type == 'fade' and 'transition_bezier' in options:
-            cmd.extend(["--transition-bezier", options['transition_bezier']])
-        
-        # Add wave parameters for wave transition
-        if transition_type == 'wave' and 'transition_wave' in options:
-            cmd.extend(["--transition-wave", options['transition_wave']])
-        
-        try:
-            # Для предпросмотра и обычного применения используем одинаковый подход
-            # но не ждем завершения процесса, чтобы не блокировать интерфейс
-            process = subprocess.Popen(
-                cmd,
-                stdout=subprocess.DEVNULL,  # Не перехватываем вывод, чтобы ускорить
-                stderr=subprocess.DEVNULL,
-                start_new_session=True  # Запускаем в фоне
-            )
+        # Run command
+        success, _, stderr = run_command(cmd)
+        if not success:
+            logger.error(f"Failed to set wallpaper: {stderr}")
             
-            # Просто проверяем, что процесс успешно запустился
-            return process.poll() is None
+        return success
+        
+    def clear_wallpaper(self, color: str = "#000000") -> bool:
+        """Clear wallpaper and set a solid color.
+        
+        Args:
+            color: Color to set as background (in hex format).
             
-        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
-            print(f"Error setting wallpaper: {e}")  # Для отладки
-            return False
-            
-    def clear_wallpaper(self, color="#000000"):
-        """Clear wallpaper with specified color."""
+        Returns:
+            bool: True if successful, False otherwise.
+        """
         if not self.is_daemon_running():
             return False
             
-        try:
-            result = subprocess.run(
-                [self.swww_path, "clear", color],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                encoding="utf-8",
-                timeout=2
-            )
-            return result.returncode == 0
-        except (subprocess.SubprocessError, FileNotFoundError):
-            return False
-            
-    def kill_daemon(self):
-        """Kill the swww-daemon."""
+        cmd = [self.swww_binary, "clear", color]
+        success, _, _ = run_command(cmd)
+        return success
+        
+    def kill_daemon(self) -> bool:
+        """Kill swww-daemon.
+        
+        Returns:
+            bool: True if successful, False otherwise.
+        """
         if not self.is_daemon_running():
-            return True
+            return True  # Already not running
             
-        try:
-            result = subprocess.run(
-                [self.swww_path, "kill"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                encoding="utf-8",
-                timeout=2
-            )
-            return result.returncode == 0
-        except (subprocess.SubprocessError, FileNotFoundError):
-            return False
+        cmd = [self.swww_binary, "kill"]
+        success, _, _ = run_command(cmd)
+        return success

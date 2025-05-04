@@ -5,9 +5,9 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, Gio, GLib
 
-from swww_gui.window import SwwwGuiWindow
-from swww_gui.config import SwwwGuiConfig
-from swww_gui.localization import Translator
+from .window import SwwwGuiWindow
+from .config import SwwwGuiConfig
+from .translator import Translator
 
 
 class SwwwGuiApplication(Adw.Application):
@@ -17,7 +17,7 @@ class SwwwGuiApplication(Adw.Application):
         super().__init__(application_id="io.github.swwwgui",
                         flags=Gio.ApplicationFlags.FLAGS_NONE)
         self.config = SwwwGuiConfig()
-        self.translator = Translator(self.config)
+        self.translator = Translator()
         self.create_action("quit", self.on_quit_action)
         self.create_action("about", self.on_about_action)
         
