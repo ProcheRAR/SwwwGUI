@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 import os
 import subprocess
 
@@ -19,7 +19,7 @@ setup(
     author="ProcheRAR",
     author_email="your.email@example.com",
     url="https://github.com/ProcheRAR/SwwwGUI",
-    packages=find_packages('src'),
+    packages=find_namespace_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
@@ -34,9 +34,9 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: X11 Applications :: GTK",
         "Intended Audience :: End Users/Desktop",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3",
         "Topic :: Desktop Environment :: Window Managers",
     ],
+    license="GPL-3.0",
     python_requires='>=3.8',
 ) 

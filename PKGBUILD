@@ -10,6 +10,7 @@ license=('GPL3')
 depends=('python' 'python-gobject' 'gtk4' 'libadwaita' 'swww')
 optdepends=('matugen: for matugen theme generation')
 makedepends=('python-setuptools' 'python-pip' 'python-wheel')
+options=('!emptydirs')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/heads/main.tar.gz")
 sha256sums=('SKIP')
 
@@ -17,6 +18,9 @@ prepare() {
   cd "SwwwGUI-main"
   # Compile GResource file
   python compile_resources.py
+  
+  # Исправляем предупреждения в setup.py
+  sed -i 's/find_packages/find_namespace_packages/g' setup.py
 }
 
 build() {
@@ -36,4 +40,7 @@ package() {
   
   # Install license
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  
+  # Удаляем файлы для разработки, чтобы оставить только необходимое для работы
+  rm -rf "$pkgdir"/usr/lib/python*/site-packages/swwwgui-*.egg-info
 } 
