@@ -3,5 +3,6 @@
   <gresource prefix="/io/github/swwwgui">
     <file>ui/window.ui</file>
     <file>icons/swwwgui.svg</file>
+    <file>css/style.css</file>
   </gresource>
 </gresources>

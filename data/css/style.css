@@ -1,0 +1,13 @@
+/* Минимальный CSS для исправления бага с обводкой в Wayland */
+
+/* Убираем фон и границы у popover */
+popover {
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+/* Скрываем стрелку */
+popover arrow {
+  opacity: 0;
+}

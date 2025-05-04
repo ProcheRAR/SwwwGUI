@@ -29,19 +29,6 @@ class EffectsPanel(Gtk.Box):
         self.set_margin_end(12)
         self.set_vexpand(True)
         
-        # Create reset button
-        reset_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        reset_box.set_halign(Gtk.Align.END)
-        reset_box.set_margin_bottom(12)
-        
-        reset_button = Gtk.Button()
-        reset_button.set_icon_name("edit-clear-symbolic")
-        reset_button.set_tooltip_text(self.translator.translate("reset_settings"))
-        reset_button.connect("clicked", self.on_reset_clicked)
-        reset_box.append(reset_button)
-        
-        self.append(reset_box)
-        
         # Create switcher bar
         switcher = Adw.ViewSwitcherBar()
         switcher.set_stack(self.stack)
@@ -73,10 +60,30 @@ class EffectsPanel(Gtk.Box):
         box.set_margin_end(12)
         scroll.set_child(box)
         
+        # Create header with title and reset button
+        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        header_box.set_margin_bottom(12)
+        
         # Create the preferences group
         title = "Эффекты" if self.translator.get_current_language() == "ru" else "Effects"
         group = Adw.PreferencesGroup(title=title)
         box.append(group)
+        
+        # Create reset button for transitions
+        reset_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        reset_box.set_halign(Gtk.Align.END)
+        reset_box.set_margin_bottom(12)
+        
+        reset_button = Gtk.Button()
+        reset_button.set_icon_name("edit-clear-symbolic")
+        reset_text = "Сбросить настройки перехода" if self.translator.get_current_language() == "ru" else "Reset Transition Settings"
+        reset_button.set_label(reset_text)
+        reset_button.set_tooltip_text(reset_text)
+        reset_button.add_css_class("destructive-action")
+        reset_button.connect("clicked", self.on_reset_transition_clicked)
+        reset_box.append(reset_button)
+        
+        box.append(reset_box)
         
         # Transition type
         transition_row = Adw.ComboRow()
@@ -160,6 +167,22 @@ class EffectsPanel(Gtk.Box):
         title = "Размер изображения" if self.translator.get_current_language() == "ru" else "Resize"
         group = Adw.PreferencesGroup(title=title)
         box.append(group)
+        
+        # Create reset button for image settings
+        reset_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        reset_box.set_halign(Gtk.Align.END)
+        reset_box.set_margin_bottom(12)
+        
+        reset_button = Gtk.Button()
+        reset_button.set_icon_name("edit-clear-symbolic")
+        reset_text = "Сбросить настройки размера" if self.translator.get_current_language() == "ru" else "Reset Resize Settings"
+        reset_button.set_label(reset_text)
+        reset_button.set_tooltip_text(reset_text)
+        reset_button.add_css_class("destructive-action")
+        reset_button.connect("clicked", self.on_reset_image_clicked)
+        reset_box.append(reset_button)
+        
+        box.append(reset_box)
         
         # Resize mode
         resize_row = Adw.ComboRow()
@@ -333,6 +356,23 @@ class EffectsPanel(Gtk.Box):
         
         self.transition_bezier_entry = bezier_entry
         grow_group.add(bezier_row)
+        
+        # Create reset button for advanced settings - перемещено в конец
+        reset_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        reset_box.set_halign(Gtk.Align.END)
+        reset_box.set_margin_top(12)
+        reset_box.set_margin_bottom(12)
+        
+        reset_button = Gtk.Button()
+        reset_button.set_icon_name("edit-clear-symbolic")
+        reset_text = "Сбросить доп. настройки" if self.translator.get_current_language() == "ru" else "Reset Advanced Settings"
+        reset_button.set_label(reset_text)
+        reset_button.set_tooltip_text(reset_text)
+        reset_button.add_css_class("destructive-action")
+        reset_button.connect("clicked", self.on_reset_advanced_clicked)
+        reset_box.append(reset_button)
+        
+        box.append(reset_box)
         
         # Add page to stack with icon 
         title = self.translator.translate("advanced")
@@ -590,25 +630,55 @@ class EffectsPanel(Gtk.Box):
         self.filter_row.set_model(string_list)
         self.filter_row.set_selected(current_selected)
 
-    def on_reset_clicked(self, button):
-        """Reset all effects settings to default values."""
+    def on_reset_transition_clicked(self, button):
+        """Reset transition settings to default values."""
         # Reset transition settings
         self.transition_type_row.set_selected(1)  # Default to 'simple'
         self.transition_step_row.set_value(2)
         self.transition_fps_row.set_value(30)
         self.transition_duration_row.set_value(3.0)
         
+        # Show confirmation toast
+        toast = Adw.Toast.new(self.translator.translate("transition_settings_reset"))
+        toast.set_timeout(2)
+        self.parent_window.add_toast(toast)
+
+    def on_reset_image_clicked(self, button):
+        """Reset image settings to default values."""
         # Reset image settings
         self.resize_mode_row.set_selected(0)  # Default to 'crop'
         self.fill_color_entry.set_text("000000")
         self.filter_row.set_selected(4)  # Default to 'Lanczos3'
         
+        # Show confirmation toast
+        toast = Adw.Toast.new(self.translator.translate("resize_settings_reset"))
+        toast.set_timeout(2)
+        self.parent_window.add_toast(toast)
+
+    def on_reset_advanced_clicked(self, button):
+        """Reset advanced settings to default values."""
         # Reset advanced settings
         self.transition_angle_row.set_value(45)
         self.transition_wave_entry.set_text("20,20")
         self.transition_pos_row.set_selected(0)  # Default to 'center'
         self.invert_y_row.set_active(False)
         self.transition_bezier_entry.set_text(".54,0,.34,.99")
+        
+        # Show confirmation toast
+        toast = Adw.Toast.new(self.translator.translate("advanced_settings_reset"))
+        toast.set_timeout(2)
+        self.parent_window.add_toast(toast)
+
+    def on_reset_clicked(self, button):
+        """Reset all effects settings to default values."""
+        # Reset transition settings
+        self.on_reset_transition_clicked(button)
+        
+        # Reset image settings
+        self.on_reset_image_clicked(button)
+        
+        # Reset advanced settings
+        self.on_reset_advanced_clicked(button)
         
         # Show confirmation toast
         toast = Adw.Toast.new(self.translator.translate("settings_reset"))

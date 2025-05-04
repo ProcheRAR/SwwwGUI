@@ -49,6 +49,24 @@ class SwwwGuiConfig:
         """Set a configuration value."""
         self.config[key] = value
     
+    def reset_to_defaults(self):
+        """Reset configuration to default values."""
+        # Save important values that shouldn't be lost on reset
+        last_image = self.config.get('last_image', '')
+        startup_folder = self.config.get('startup_folder', str(Path.home() / 'Pictures'))
+        language = self.config.get('language', 'en')
+        
+        # Replace with defaults
+        self.config = self._get_defaults()
+        
+        # Restore values that should be preserved
+        self.config['last_image'] = last_image
+        self.config['startup_folder'] = startup_folder
+        self.config['language'] = language
+        
+        # Save to file
+        self.save()
+    
     def _get_defaults(self):
         """Get default configuration values."""
         return {
